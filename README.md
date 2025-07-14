@@ -56,5 +56,6 @@ This workflow streamlines invoice management by automatically processing PDFs or
 
 ![App Screenshot](https://res.cloudinary.com/deiymcwio/image/upload/v1752486229/snapshot_fs3sad.png)
 
----## Tags
+---
+## Tags
 `automation` `Slack` `Google Sheets` `OCR` `AI` `invoice-processing` `workflow` `data-extraction`
