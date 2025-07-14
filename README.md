@@ -5,7 +5,7 @@
 
 This workflow streamlines invoice management by automatically processing PDFs or images of invoices sent in Slack. Once an invoice is uploaded, the system extracts key details (e.g., items, prices, totals) using OCR and AI, then logs the data into a structured Google Sheet. Finally, a summary of the parsed data is sent back to Slack for confirmation—eliminating manual entry and reducing errors.
 
---
+---
 
 ## Features
 - **Slack Integration**: Automatically receives invoice PDFs or images directly from Slack channels or direct messages.
