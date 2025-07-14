@@ -1,0 +1,749 @@
+{
+  "name": "Invoice Tracker (Image/PDF)",
+  "nodes": [
+    {
+      "parameters": {
+        "trigger": [
+          "message"
+        ],
+        "channelId": {
+          "__rl": true,
+          "value": "C095JT67GFP",
+          "mode": "list",
+          "cachedResultName": "testing-channel"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1620,
+        -40
+      ],
+      "id": "9056d932-80ca-426f-9353-06ca838b5723",
+      "name": "Slack Trigger",
+      "webhookId": "aa8ac8da-f661-4580-a665-d1b453fe9bec",
+      "credentials": {
+        "slackApi": {
+          "id": "8ExSSZMcEKRYXoUn",
+          "name": "Slack account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C095JT67GFP",
+          "mode": "list",
+          "cachedResultName": "testing-channel"
+        },
+        "text": "={{ $json.output }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        100,
+        -20
+      ],
+      "id": "8ff2f76e-2f9c-44d5-a555-13ccf8dec47d",
+      "name": "Send a message",
+      "webhookId": "41783025-cf1f-4c5c-98f0-e71eb94c6a78",
+      "credentials": {
+        "slackApi": {
+          "id": "8ExSSZMcEKRYXoUn",
+          "name": "Slack account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url_private }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "slackApi",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1020,
+        -200
+      ],
+      "id": "d278c8d5-610a-4d8c-8ddd-b77447bad5bd",
+      "name": "Get Image Binary",
+      "credentials": {
+        "slackApi": {
+          "id": "8ExSSZMcEKRYXoUn",
+          "name": "Slack account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.mimetype }}",
+                    "rightValue": "=image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "8fa11a80-eceb-4f10-853d-aa83dd45f119"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "60cc1ae1-7b3e-480a-a513-a49f62ec7f2a",
+                    "leftValue": "={{ $json.filetype }}",
+                    "rightValue": "pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1220,
+        -40
+      ],
+      "id": "097bfc73-dd58-46ad-bcac-a1a7b96ac8b5",
+      "name": "Check Type"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "fileId": "={{ $json.files[0].id }}"
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -1420,
+        -40
+      ],
+      "id": "62e8ec7e-5dc8-417b-afde-c48e3b11b2c5",
+      "name": "Get a file1",
+      "webhookId": "4b3ee64e-03e9-488c-b5a5-fb785c23e8b0",
+      "credentials": {
+        "slackApi": {
+          "id": "8ExSSZMcEKRYXoUn",
+          "name": "Slack account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url_private }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "slackApi",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1020,
+        140
+      ],
+      "id": "33e4d2e0-fa1c-4abb-9832-431db95b00e8",
+      "name": "Get PDF Binary",
+      "credentials": {
+        "slackApi": {
+          "id": "8ExSSZMcEKRYXoUn",
+          "name": "Slack account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        140
+      ],
+      "id": "e97de0d1-c763-4603-b460-d423bd84596c",
+      "name": "Extract PDF Data"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "=message.content.items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        140
+      ],
+      "id": "97c25828-4e6a-40e1-8600-0983662c0d65",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1T21LTRYDxIxcGzpTRLekfRkfi7XoYS6M2jtnW3E-uu0",
+          "mode": "list",
+          "cachedResultName": "Expense Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T21LTRYDxIxcGzpTRLekfRkfi7XoYS6M2jtnW3E-uu0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T21LTRYDxIxcGzpTRLekfRkfi7XoYS6M2jtnW3E-uu0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Open AI1').item.json.message.content.seller.name }}",
+            "Price": "={{ $json.total }}",
+            "Line Item": "={{ $json.description }}",
+            "Invoice #": "={{ $('Open AI1').item.json.message.content.invoice_number }}",
+            "QTY": "={{ $json.quantity }}",
+            "Invoice Total": "={{ $('Open AI1').item.json.message.content.total_amount }}",
+            "Date": "={{ $('Open AI1').item.json.message.content.invoice_date }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Line Item",
+              "displayName": "Line Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Invoice #",
+              "displayName": "Invoice #",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "QTY",
+              "displayName": "QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Invoice Total",
+              "displayName": "Invoice Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -100,
+        140
+      ],
+      "id": "9816fc0c-d65c-4f9c-9d5b-e31e1817856d",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HHgRZ0fgVEdXpGun",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "Please extract all the text from the image",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -840,
+        -200
+      ],
+      "id": "2da05720-d46f-4d1e-818f-ca9dae217356",
+      "name": "Analyze image",
+      "credentials": {
+        "openAiApi": {
+          "id": "9nZgHWdCeFvb8GXO",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "=message.content.items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        -200
+      ],
+      "id": "f6e8b107-5b6f-4673-88e6-d42d72c218f5",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1T21LTRYDxIxcGzpTRLekfRkfi7XoYS6M2jtnW3E-uu0",
+          "mode": "list",
+          "cachedResultName": "Expense Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T21LTRYDxIxcGzpTRLekfRkfi7XoYS6M2jtnW3E-uu0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T21LTRYDxIxcGzpTRLekfRkfi7XoYS6M2jtnW3E-uu0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Open AI').item.json.message.content.seller.name }}",
+            "Price": "={{ $json.total }}",
+            "Line Item": "={{ $json.description }}",
+            "Invoice #": "={{ $('Open AI').item.json.message.content.invoice_number }}",
+            "QTY": "={{ $json.quantity }}",
+            "Invoice Total": "={{ $('Open AI').item.json.message.content.total_amount }}",
+            "Date": "={{ $('Open AI').item.json.message.content.invoice_date }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Line Item",
+              "displayName": "Line Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Invoice #",
+              "displayName": "Invoice #",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "QTY",
+              "displayName": "QTY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Invoice Total",
+              "displayName": "Invoice Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -100,
+        -200
+      ],
+      "id": "12d0cb1f-2e40-46cc-8116-ecece05f67f5",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HHgRZ0fgVEdXpGun",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot that's great at extracting JSON data from invoices or receipts or documents. ",
+              "role": "system"
+            },
+            {
+              "content": "=Here is the document you need to extract data from: {{ $json.content }}"
+            },
+            {
+              "content": "=I want you to output this data as JSON data in the following format:\n{\n  \"invoice_number\": \"INV-2025-001\",\n  \"invoice_date\": \"2025-07-13\",\n  \"due_date\": \"2025-07-20\",\n  \"currency\": \"USD\",\n  \"status\": \"unpaid\",\n  \"seller\": {\n    \"name\": \"Opsynth Solutions Inc.\",\n    \"address\": \"123 Tech Valley, San Francisco, CA 94105\",\n    \"email\": \"billing@opsynth.ai\",\n    \"phone\": \"+1 (555) 123-4567\",\n    \"tax_id\": \"98-7654321\"\n  },\n  \"buyer\": {\n    \"name\": \"Acme Corp\",\n    \"address\": \"456 Market Lane, New York, NY 10001\",\n    \"email\": \"accounts@acmecorp.com\",\n    \"phone\": \"+1 (555) 987-6543\",\n    \"tax_id\": \"12-3456789\"\n  },\n  \"items\": [\n    {\n      \"description\": \"AI Agent Setup & Integration\",\n      \"quantity\": 1,\n      \"unit_price\": 1000.00,\n      \"total\": 1000.00\n    },\n    {\n      \"description\": \"Monthly AI Agent Subscription - July 2025\",\n      \"quantity\": 1,\n      \"unit_price\": 200.00,\n      \"total\": 200.00\n    }\n  ],\n  \"subtotal\": 1200.00,\n  \"tax_rate\": 0.10,\n  \"tax_amount\": 120.00,\n  \"total_amount\": 1320.00,\n  \"notes\": \"Payment due within 7 days. Thank you for your business!\",\n  \"terms\": \"Late payments may incur a 2% monthly fee.\"\n}\n",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -640,
+        -200
+      ],
+      "id": "bea1bc96-15f1-42fb-9c03-7ac9eecbba59",
+      "name": "Open AI",
+      "credentials": {
+        "openAiApi": {
+          "id": "9nZgHWdCeFvb8GXO",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're an intelligent bot that's great at extracting JSON data from invoices or receipts or documents. ",
+              "role": "system"
+            },
+            {
+              "content": "=Here is the document you need to extract data from: {{ $json.text }}"
+            },
+            {
+              "content": "=I want you to output this data as JSON data in the following format:\n{\n  \"invoice_number\": \"INV-2025-001\",\n  \"invoice_date\": \"2025-07-13\",\n  \"due_date\": \"2025-07-20\",\n  \"currency\": \"USD\",\n  \"status\": \"unpaid\",\n  \"seller\": {\n    \"name\": \"Opsynth Solutions Inc.\",\n    \"address\": \"123 Tech Valley, San Francisco, CA 94105\",\n    \"email\": \"billing@opsynth.ai\",\n    \"phone\": \"+1 (555) 123-4567\",\n    \"tax_id\": \"98-7654321\"\n  },\n  \"buyer\": {\n    \"name\": \"Acme Corp\",\n    \"address\": \"456 Market Lane, New York, NY 10001\",\n    \"email\": \"accounts@acmecorp.com\",\n    \"phone\": \"+1 (555) 987-6543\",\n    \"tax_id\": \"12-3456789\"\n  },\n  \"items\": [\n    {\n      \"description\": \"AI Agent Setup & Integration\",\n      \"quantity\": 1,\n      \"unit_price\": 1000.00,\n      \"total\": 1000.00\n    },\n    {\n      \"description\": \"Monthly AI Agent Subscription - July 2025\",\n      \"quantity\": 1,\n      \"unit_price\": 200.00,\n      \"total\": 200.00\n    }\n  ],\n  \"subtotal\": 1200.00,\n  \"tax_rate\": 0.10,\n  \"tax_amount\": 120.00,\n  \"total_amount\": 1320.00,\n  \"notes\": \"Payment due within 7 days. Thank you for your business!\",\n  \"terms\": \"Late payments may incur a 2% monthly fee.\"\n}\n",
+              "role": "assistant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -640,
+        140
+      ],
+      "id": "76cad0ab-1588-48d6-87db-39a427804819",
+      "name": "Open AI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "9nZgHWdCeFvb8GXO",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get a file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Type": {
+      "main": [
+        [
+          {
+            "node": "Get Image Binary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get PDF Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image Binary": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file1": {
+      "main": [
+        [
+          {
+            "node": "Check Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get PDF Binary": {
+      "main": [
+        [
+          {
+            "node": "Extract PDF Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract PDF Data": {
+      "main": [
+        [
+          {
+            "node": "Open AI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "Open AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Open AI": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Open AI1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0a8ef69d-498a-4979-976f-782892151c1e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53122e804c8ff562f6b21d865928dff46770e0b600e76f1b89e81361ab0ba143"
+  },
+  "id": "2wGSpFU1Zc95vEnp",
+  "tags": []
+}
